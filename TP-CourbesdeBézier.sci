@@ -64,11 +64,15 @@ function BezierQuestion4(a,b,d)
 endfunction
 
 //5-DeCasteljau (lancé via la fonction polyControleCasteljau)
-function y = DeCasteljau(P,T)
-    for i=1:size(T,2)
-        y(i,:)=calcBarycentre(P,T(i))
-    end
-    plot2d(y(:,1),y(:,2))
+//les deux sous courbes sont de même degré que la courbe originel
+//on veut couper pour un t0 entre (0,1)
+function pt = DeCasteljau(tzero)
+    T = polyControleCasteljau()
+    tracerCasteljau(T,[0:0.1:1]) 
+    
+    //découpage de la courbe
+    pt = tracerCasteljau(T,tzero)
+    plot(pt(1),pt(2),"ro")
 endfunction
 
 function T = polyControleCasteljau()
@@ -84,7 +88,14 @@ function T = polyControleCasteljau()
         end
         i = i+1
     end
-    DeCasteljau(T,[0:0.1:1])
+    tracerCasteljau(T,[0:0.1:1])
+endfunction
+
+function y = tracerCasteljau(P,T)
+    for i=1:size(T,2)
+        y(i,:)=calcBarycentre(P,T(i))
+    end
+    plot2d(y(:,1),y(:,2))
 endfunction
 
 function x = calcBarycentre(x,t)
@@ -92,6 +103,11 @@ function x = calcBarycentre(x,t)
         barycentre(i,:) = (1-t)*x(i,:)+ t*x(i+1,:);
     end
     x = barycentre
+    //a sera les coordonnées manquantes des points de controle de la sous courbe gauche
+    a = barycentre(1,:)
+    //y a un peu trop de point....
+    //Le probleme est qu'on ne peut pas récuperer la 1ere ligne des barycentre du fait de la récursivité :/
+    plot(a(1),a(2),"ro")
     if((size(x,1)>1))
        x = calcBarycentre(x,t);
     end
