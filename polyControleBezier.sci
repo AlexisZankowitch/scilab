@@ -1,20 +1,4 @@
-//xclick recuperation coordonnés clique souris
-
-function T = polyControleBezier(a,b)
-    ibutton = 0;
-    i=1;
-    while (ibutton <> 2 & ibutton <> 5)
-        plot2d(0,0,rect=[0,0,3,3])
-        [ibutton,x,y]=xclick()
-        T(i,:)=[x,y]
-        plot(x,y,"ro");
-        if(i>1)
-            plot([T(i-1,1),T(i,1)],[T(i-1,2),T(i,2)])
-        end
-        i = i+1
-    end
-endfunction
-
+//Alexis Zankowitch
 //changement t vers t_seconde
 function T = BezierQuestion1(a,b)
     //traçage B(n)
@@ -54,6 +38,43 @@ function BezierQuestion3(a,b)
     //traçage B(n+1)
     courbeBezier([a:0.01:b],Q,a,b)
     //Les deux courbes sont sensiblement identiques mais B(n+1) à l'air d'être plus précise, nous vérifirons cette hypothèse à la question 4
+endfunction
+
+//Generalisation à B(n+d)
+function BezierQuestion4(a,b,d)
+    T = polyControleBezier(a,b)
+    n = size(T,1)
+    //il faut repeter la generalisation d-1 fois
+    for j=1:d-1
+        Q(1,:)=T(1,:)
+        for i=2:n
+            coef1 = i/(n+1)
+            coef2 = 1-i/(n+1)
+            Q(i,:)=coef1*T(i-1,:)+coef2*T(i,:)
+        end
+        Q(n+1,:)=T(n,:)
+        disp(Q)
+        //A la prochaine iteration il faut utiliser les points de Q
+        n=size(Q,1)
+        T=Q
+        courbeBezier([a:0.01:b],T,a,b)
+    end
+endfunction
+
+//point de controle
+function T = polyControleBezier(a,b)
+    ibutton = 0;
+    i=1;
+    while (ibutton <> 2 & ibutton <> 5)
+        plot2d(0,0,rect=[0,0,3,3])
+        [ibutton,x,y]=xclick()
+        T(i,:)=[x,y]
+        plot(x,y,"ro");
+        if(i>1)
+            plot([T(i-1,1),T(i,1)],[T(i-1,2),T(i,2)])
+        end
+        i = i+1
+    end
 endfunction
 
 function pBernstein = bernstein(n,i,t)
