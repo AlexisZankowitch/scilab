@@ -13,7 +13,7 @@ function T = polyControleBezier(a,b)
         end
         i = i+1
     end
-    // question 1.1
+    //traçage B(n)
     courbeBezier([a:0.01:b],T,a,b)
     //question 1.2
     n = size(T,1)
@@ -24,6 +24,7 @@ function T = polyControleBezier(a,b)
         Q(i,:)=coef1*T(i-1,:)+coef2*T(i,:)
     end
     Q(n+1,:)=T(n,:)
+    //traçage B(n+1)
     courbeBezier([a:0.01:b],Q,a,b)
 endfunction
 
@@ -37,7 +38,7 @@ endfunction
 
 function bezier = courbeBezier(t,P,a,b)
     bezier=0;
-    // on remplace t par t_second avec t appartient a [a,b] pour paramètre 
+    // question 1.1 on remplace t par t_second avec t appartient a [a,b] pour paramètre 
     t_second = (t-a)/(b-a)
     for i=0:size(P,1)-1
         bezier = bezier + P(i+1,:)'*bernstein(size(P,1)-1,i,t_second)
