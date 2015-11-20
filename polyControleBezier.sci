@@ -13,9 +13,19 @@ function T = polyControleBezier(a,b)
         end
         i = i+1
     end
+endfunction
+
+//changement t vers t_seconde
+function T = BezierQuestion1(a,b)
     //traçage B(n)
+    T = polyControleBezier(a,b)
     courbeBezier([a:0.01:b],T,a,b)
+endfunction
+
+//Elevation du degré
+function Q = BezierQuestion2(a,b)
     //question 1.2
+    T = polyControleBezier(a,b)
     n = size(T,1)
     Q(1,:)=T(1,:)
     for i=2:n
@@ -26,6 +36,24 @@ function T = polyControleBezier(a,b)
     Q(n+1,:)=T(n,:)
     //traçage B(n+1)
     courbeBezier([a:0.01:b],Q,a,b)
+endfunction
+
+//traçage et constatation de B(n) et B(n+1)
+function BezierQuestion3(a,b)
+    T = polyControleBezier(a,b)
+    n = size(T,1)
+    Q(1,:)=T(1,:)
+    for i=2:n
+        coef1 = i/(n+1)
+        coef2 = 1-i/(n+1)
+        Q(i,:)=coef1*T(i-1,:)+coef2*T(i,:)
+    end
+    Q(n+1,:)=T(n,:)
+    //traçage B(n)
+    courbeBezier([a:0.01:b],T,a,b)
+    //traçage B(n+1)
+    courbeBezier([a:0.01:b],Q,a,b)
+    //Les deux courbes sont sensiblement identiques mais B(n+1) à l'air d'être plus précise, nous vérifirons cette hypothèse à la question 4
 endfunction
 
 function pBernstein = bernstein(n,i,t)
