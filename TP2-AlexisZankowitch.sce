@@ -41,7 +41,6 @@ endfunction
 function base = coxDeBoor(t,m,n)
     interval = [0:1/m:1]
     base = baseBspline(t,interval)
-    a = 0
     for j = 1 : n
         for i = 1 : size(base,1)-j
             deno = (interval(i+j)-interval(i))
@@ -58,17 +57,35 @@ function base = question1()
     interval = [0:1:6]
     for t = 0 : 1 :6
         base = baseBspline(t,interval)
-        a = 0
         for j = 1 : 1
             for i = 1 : size(base,1)-j
                 deno = (interval(i+j)-interval(i))
-                denoNH = (interval(i+j+1)-interval(i+1))
                 coef1 = (t-interval(i))/ deno
-                coef2 = (interval(i+j+1)-t)/ deno //changer par denoNH si interval non homogene
+                coef2 = (interval(i+j+1)-t)/ deno
                 base(i) = coef1 * base(i) + coef2 * base(i+1)
             end
         end
-        plot(base)
-        //base =  base(1:m-n,1)//recupere quatres premieres lignes
+        plot(base,'y-')
     end
+endfunction
+
+function base = question2()
+    t = [0,1,2,3,5,6,7]
+    interval = [0:1:6]
+    for ind = 1 : size(t,2)
+        base = baseBspline(t(ind),interval)
+        for j = 1 : 1
+            for i = 1 : size(base,1)-j
+                denoNH = (interval(i+j+1)-interval(i+1))
+                coef1 = (t(ind)-interval(i))/ denoNH
+                coef2 = (interval(i+j+1)-t(ind))/ denoNH
+                base(i) = coef1 * base(i) + coef2 * base(i+1)
+            end
+        end
+        plot(base,'r-')
+    end
+endfunction
+
+function base = question3()
+    
 endfunction
