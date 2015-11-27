@@ -57,6 +57,7 @@ function base = question1()
     interval = [0:1:6]
     for t = 0 : 1 :6
         base = baseBspline(t,interval)
+        disp(base)
         for j = 1 : 1
             for i = 1 : size(base,1)-j
                 deno = (interval(i+j)-interval(i))
@@ -65,7 +66,7 @@ function base = question1()
                 base(i) = coef1 * base(i) + coef2 * base(i+1)
             end
         end
-        plot(base,'y-')
+        plot(base,'r-')
     end
 endfunction
 
@@ -86,6 +87,74 @@ function base = question2()
     end
 endfunction
 
-function base = question3()
-    
+//question 3 -4 appeler intHomogene et intNonHomogene avec k 3,4,etc... et j dernier chiffre de j
+function base = intHomogene(t,m,n)
+    interval = [0:1:m]
+    base = baseBspline(t,interval)
+    for j = 1 : n
+        for i = 1 : size(base,1)-j
+            deno = (interval(i+j)-interval(i))
+            coef1 = (t-interval(i))/ deno
+            coef2 = (interval(i+j+1)-t)/ deno 
+            base(i) = coef1 * base(i) + coef2 * base(i+1)
+        end
+    end
+    base =  base(1:m-n,1)//recupere quatres premieres lignes
+endfunction
+// question 1 t=7 k=1
+// question 3 t = 7 k=2
+function homogene(t,k)
+    T=[0,1,2,3,4,5,6,7]
+    cx = []
+    for i = 0 : 0.01 : t 
+        cx = [cx,intHomogene(i,t,k)]
+    end
+    t=[0:0.01:t]
+    disp(cx)
+    for i=1 : size(cx,1)
+        plot(t,cx(i,:))
+    end
+endfunction
+
+function nonHomogene(t,k)
+    cx = []
+    for i = 0 : 0.1 : t 
+        cx = [cx,intNonHomogene(i,t,k)]
+    end
+    t=[0:0.1:t]
+    for i=1 : size(cx,1)
+        plot(t,cx(i,:))
+    end
+endfunction
+
+function base = intNonHomogene(t,m,n)
+    interval = [0,1,2,3,5,6,7]
+    base = baseBspline(t,interval)
+    disp(base)
+    for j = 1 : k
+        for i = 1 : size(base,1)-j
+            denoNH = (interval(i+j+1)-interval(i+1))
+            coef1 = (t-interval(i))/ denoNH
+            coef2 = (interval(i+j+1)-t)/ denoNH
+            base(i) = coef1 * base(i) + coef2 * base(i+1)
+        end
+    end
+     base =  base(1:m-n,1)
+endfunction
+
+//question 5 argument t vecteur de noeud et k
+function base = bjk(t,k)
+    interval = [0:1:6]
+    for ind = 1 : size(t,2)
+        base = baseBspline(t(ind),interval)
+        for j = 1 : k
+            for i = 1 : size(base,1)-j
+                denoNH = (interval(i+j+1)-interval(i+1))
+                coef1 = (t(ind)-interval(i))/ denoNH
+                coef2 = (interval(i+j+1)-t(ind))/ denoNH
+                base(i) = coef1 * base(i) + coef2 * base(i+1)
+            end
+        end
+        plot(base,'r-')
+    end
 endfunction
