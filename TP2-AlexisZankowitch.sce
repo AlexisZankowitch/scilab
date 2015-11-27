@@ -137,6 +137,7 @@ function base = intNonHomogene(t,m,n)
             coef1 = (t-interval(i))/ denoNH
             coef2 = (interval(i+j+1)-t)/ denoNH
             base(i) = coef1 * base(i) + coef2 * base(i+1)
+            //probleme calcul bj1
         end
     end
      base =  base(1:m-n,1)
