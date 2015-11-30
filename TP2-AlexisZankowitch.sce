@@ -55,110 +55,122 @@ endfunction
 
 // question 1 t=7 k=1
 // question 3 t = 7 k=2
-function homogene(t,k)
+function cx = homogene(t,k)
     cx = []
+    interval = [0:1:t]
     for i = 0 : 0.01 : t 
-        cx = [cx,intHomogene(i,t,k)]
+        cx = [cx,intHomogene(i,interval,k)]
     end
     t=[0:0.01:t]
-    disp(cx)
     for i=1 : size(cx,1)
         plot(t,cx(i,:))
     end
 endfunction
 
-function nonHomogene(t,k)
+function  cx = nonHomogene(t,k)
     cx = []
-    for i = 0 : 0.1 : t 
+    for i = 0 : 0.01 : t 
         cx = [cx,intNonHomogene(i,t,k)]
     end
-    t=[0:0.1:t]
+    t=[0:0.01:t]
     for i=1 : size(cx,1)
         plot(t,cx(i,:))
     end
 endfunction
+
+//T est un vecteur noeud k est le degré des bj on peut utiliser cette fonction pour generer les bj
+function cx = bjk(t,k,col)
+    cx = []
+    taille = size(t,2)
+    for i = 0 : 0.01 : taille
+        cx = [cx,intHomogene(i,t,k)]
+    end
+    t=[0:0.01:size(t,2)]
+    for i=1 : size(cx,1)
+        plot(t,cx(i,:),col)
+    end
+endfunction
+
+//les noeuds multiples sont confondus leur courbes n'est pas dérivable car on a un pique
 
 //à ne pas appeler intHomogene et intNonHomogene avec k 3,4,etc... et j dernier chiffre de j
 function base = intHomogene(t,m,n)
-    interval = [0:1:m]
-    base = baseBspline(t,interval)
+    base = baseBspline(t,m)
     for j = 1 : n
         for i = 1 : size(base,1)-j
-            deno = (interval(i+j)-interval(i))
-            coef1 = (t-interval(i))/ deno
-            coef2 = (interval(i+j+1)-t)/ deno 
+            deno = (m(i+j)-m(i))
+            denoNH = (m(i+j+1)-m(i+1))
+            if(deno==0)
+                coef1 = 0
+            else
+                coef1 = (t-m(i))/ deno
+            end
+            if(denoNH==0)
+                coef2 = 0
+            else
+                coef2 = (m(i+j+1)-t)/ denoNH
+            end
             base(i) = coef1 * base(i) + coef2 * base(i+1)
         end
     end
-    base =  base(1:m-n,1)//recupere quatres premieres lignes
+    taille = size(m,2)-n-1
+    base =  base(1:taille,1)//recupere lignes
 endfunction
 
 
 function base = intNonHomogene(t,m,n)
     interval = [0,1,2,3,5,6,7]
     base = baseBspline(t,interval)
-    disp(base)
-    for j = 1 : k
+    for j = 1 : n
         for i = 1 : size(base,1)-j
+            disp(size(base,1)-j)
+            deno = (interval(i+j)-interval(i))
             denoNH = (interval(i+j+1)-interval(i+1))
-            coef1 = (t-interval(i))/ denoNH
+            coef1 = (t-interval(i))/ deno
             coef2 = (interval(i+j+1)-t)/ denoNH
             base(i) = coef1 * base(i) + coef2 * base(i+1)
             //probleme calcul bj1
         end
     end
-     base =  base(1:m-n,1)
+    taille = size(interval,2)-n-1
+    base =  base(1:taille,1)
 endfunction
 
-//question 5 argument t vecteur de noeud et k
-function base = bjk(t,k)
-    interval = [0:1:6]
-    for ind = 1 : size(t,2)
-        base = baseBspline(t(ind),interval)
-        for j = 1 : k
-            for i = 1 : size(base,1)-j
-                denoNH = (interval(i+j+1)-interval(i+1))
-                coef1 = (t(ind)-interval(i))/ denoNH
-                coef2 = (interval(i+j+1)-t(ind))/ denoNH
-                base(i) = coef1 * base(i) + coef2 * base(i+1)
-            end
-        end
-        plot(base,'r-')
-    end
+function question1()
+    bjk([0,1,2,3,4,5,6],1,'r-')
 endfunction
 
-//A ne plus utiliser
-
-function base = question1()
-    interval = [0:1:6]
-    for t = 0 : 1 :6
-        base = baseBspline(t,interval)
-        disp(base)
-        for j = 1 : 1
-            for i = 1 : size(base,1)-j
-                deno = (interval(i+j)-interval(i))
-                coef1 = (t-interval(i))/ deno
-                coef2 = (interval(i+j+1)-t)/ deno
-                base(i) = coef1 * base(i) + coef2 * base(i+1)
-            end
-        end
-        plot(base,'r-')
-    end
+function question2()
+    bjk([0,1,2,3,5,6,7],1,'r-')
 endfunction
 
-function base = question2()
-    t = [0,1,2,3,5,6,7]
-    interval = [0:1:6]
-    for ind = 1 : size(t,2)
-        base = baseBspline(t(ind),interval)
-        for j = 1 : 1
-            for i = 1 : size(base,1)-j
-                denoNH = (interval(i+j+1)-interval(i+1))
-                coef1 = (t(ind)-interval(i))/ denoNH
-                coef2 = (interval(i+j+1)-t(ind))/ denoNH
-                base(i) = coef1 * base(i) + coef2 * base(i+1)
-            end
-        end
-        plot(base,'r-')
-    end
+function question3()
+    bjk([0,1,2,3,4,5,6],2,'r-')
+    bjk([0,1,2,3,5,6,7],2,'b-')
+endfunction
+
+function question4()
+    bjk([0,1,2,3,5,8,9,11],3,'b-')
+    bjk([0,1,2,3,4,5,6,7],3,'r-')
+endfunction
+
+function question5()
+    disp("voir function bjk")
+endfunction
+
+function question6()
+    bjk([0,1,2,3,3,3,4,5],3,'b-')
+    bjk([1,1,1,1,2,3,4,5],3,'r-')
+endfunction
+
+function question7()
+    disp("ça vaut 1 aux noeud multiples et la courbes est en triangle. ce nest pas derivable")
+endfunction
+
+function question8()
+    
+endfunction
+
+function question9()
+    bjk([0,0,0,0,1,1,1,1],3,'g-')
 endfunction
