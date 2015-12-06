@@ -1,4 +1,6 @@
-//ALEXIS ZANKOWITCH
+﻿//ALEXIS ZANKOWITCH
+// ROMAIN CARON
+
 
 function T = polyControleBsplines()
     ibutton = 0;
